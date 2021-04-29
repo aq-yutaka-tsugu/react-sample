@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+
+  # Host===================================================================
+  shibuya-nginx:
+    image: nginx:1.12
+    container_name: shibuya-nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./app/:/var/www/html/
+      - ./docker/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/nginx/log:/var/log/nginx/
+
+  # App===================================================================
+  shibuya-app:
+    container_name: shibuya-app
+    build: docker/app
+    volumes:
+      - ./app/:/var/www/html/
+      - ./docker/app/conf.d/php.ini:/usr/local/etc/php/conf.d/php.ini
+
+  # NPM===================================================================
+  shibuya-node:
+    image: node:lts
+    container_name: shibuya-node
+    volumes:
+      - ./app/:/var/www/html/
+    working_dir: /var/www/html/
+    entrypoint: [ "npm" ]
+    command: [ "--help" ]
+
+  # Database===================================================================
+  shibuya-db:
+    image: mysql:8.0
+    container_name: shibuya-db
+    environment:
+      MYSQL_DATABASE: 'shibuya-database'
+      MYSQL_USER: 'shibuya-user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    volumes:
+      - shibuya-db:/var/lib/mysql
+    ports:
+      - 3306:3306
+
+volumes:
+  shibuya-db:
+    driver: local
