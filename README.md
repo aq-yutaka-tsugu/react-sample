@@ -1,15 +1,13 @@
-# Shibuya-sample
+# react-sample
 
 ### ■環境構築
 下記スクリプト実行
 ```
 docker-compose up --build -d
-docker-compose exec app bash
-```
-コンテナ内下記実行
-```
-cp .env.example .env
-composer install
+docker-compose run --rm app cp .env.example .env
+docker-compose run --rm app composer install
+docker-compose run --rm node install
+docker-compose run --rm node run dev
 ```
 
 下記にアクセス
